@@ -1,6 +1,7 @@
 package com.payandpark.payandpark.parkingslot.repository;
 
 import com.payandpark.payandpark.Exception.ResourceNotFoundException;
+import com.payandpark.payandpark.parkingslot.model.AddParkingSlotRequest;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlotRowMapper;
 import lombok.extern.log4j.Log4j2;
@@ -55,5 +56,12 @@ public class ParkingSlotRepository {
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<>();
         }
+    }
+
+    public ParkingSlot addParkingSlot(AddParkingSlotRequest request) {
+        String sql = "insert into pl.parkingslot (type)\n" +
+                "values ("+ request.getType() + ")";
+
+        return null;
     }
 }

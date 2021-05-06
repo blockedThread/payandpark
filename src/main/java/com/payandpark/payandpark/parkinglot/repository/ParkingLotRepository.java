@@ -17,7 +17,7 @@ public class ParkingLotRepository {
     private JdbcTemplate jdbcTemplate;
 
     public ParkingLot fetchParkingLotById(int id) {
-        String sql = "SELECT id from pl.parking_lot where id = " + id;
+        String sql = "select id from pl.parking_lot where id = " + id;
         try {
             log.info("Query :: {}", sql);
             ParkingLot parkingLot =  jdbcTemplate.queryForObject(sql, new ParkingLotMapper());

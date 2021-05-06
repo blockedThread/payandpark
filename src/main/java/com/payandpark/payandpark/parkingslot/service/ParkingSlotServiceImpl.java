@@ -1,5 +1,6 @@
 package com.payandpark.payandpark.parkingslot.service;
 
+import com.payandpark.payandpark.parkingslot.model.AddParkingSlotRequest;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
 import com.payandpark.payandpark.parkingslot.repository.ParkingSlotRepository;
 import lombok.extern.log4j.Log4j2;
@@ -25,5 +26,10 @@ public class ParkingSlotServiceImpl implements ParkingSlotService {
     public List<ParkingSlot> fetchAllParkingSlotsByLotId(int parkingLotId) {
         log.info("Fetching all parking slot details in lot id :: {}", parkingLotId);
         return parkingSlotRepository.fetchAllParkingSlotsByLotId(parkingLotId);
+    }
+
+    @Override
+    public ParkingSlot insertParkingSlot(AddParkingSlotRequest request) {
+        return null;
     }
 }
