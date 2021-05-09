@@ -1,12 +1,13 @@
 package com.payandpark.payandpark.parkingslot.repository;
 
 import com.payandpark.payandpark.Exception.ResourceNotFoundException;
-import com.payandpark.payandpark.parkingslot.model.AddParkingSlotRequest;
+import com.payandpark.payandpark.Exception.ResourceNotSavedException;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
-import com.payandpark.payandpark.parkingslot.model.ParkingSlotRowMapper;
+import com.payandpark.payandpark.parkingslot.model.ParkingSlotRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +29,7 @@ public class ParkingSlotRepository {
                 "on ps.vehicle_type_id = vt.id where ps.id = " + id;
         try {
             log.info("Query :: {}", sql);
-            ParkingSlot parkingSlot = jdbcTemplate.queryForObject(sql, new ParkingSlotRowMapper());
+            ParkingSlot parkingSlot = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ParkingSlot.class));
             log.info("Parking slot details :: {} for id :: {}", parkingSlot.toString(), id);
             return parkingSlot;
         } catch (EmptyResultDataAccessException e) {
@@ -50,7 +51,7 @@ public class ParkingSlotRepository {
                 "on vt.id = ps.vehicle_type_id";
         try {
             log.info("Query :: {}", sql);
-            List<ParkingSlot> parkingSlots = jdbcTemplate.query(sql, new ParkingSlotRowMapper());
+            List<ParkingSlot> parkingSlots = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ParkingSlot.class));
             log.info("Parking slot details :: {} for parking lot id :: {}", parkingSlots.toString(), parkingLotId);
             return parkingSlots;
         } catch (EmptyResultDataAccessException e) {
@@ -58,10 +59,28 @@ public class ParkingSlotRepository {
         }
     }
 
-    public ParkingSlot addParkingSlot(AddParkingSlotRequest request) {
-        String sql = "insert into pl.parkingslot (type)\n" +
-                "values ("+ request.getType() + ")";
+    public ParkingSlot addParkingSlot(ParkingSlotRequest request) {
+        String sql = "insert into pl.parking_slot (vehicle_type_id)\n" +
+                "values ("+ request.getType() + ") returning id";
+        ParkingSlot parkingSlot = null;
+        try {
+            log.info("Query :: {}", sql);
+            parkingSlot = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ParkingSlot.class));
+        } catch (Exception e) {
+            log.error("Error occurred while inserting parking slot :: {} cause :: {}", request.toString(), e.getCause());
+            throw new ResourceNotSavedException("Error occurred while inserting parking slot");
+        }
 
-        return null;
+        return parkingSlot;
+    }
+
+    public void removeParkingSlot(int parkingSlotId) {
+        String sql = "delete from pl.parking_slot where id = " + parkingSlotId;
+        try {
+            log.info("Query :: {}", sql);
+            jdbcTemplate.execute(sql);
+        } catch (Exception e) {
+            log.error("Error occurred while deleting parking slot :: {} cause :: {}",parkingSlotId, e.getCause());
+        }
     }
 }

@@ -2,10 +2,10 @@ package com.payandpark.payandpark.parkinglot.repository;
 
 import com.payandpark.payandpark.Exception.ResourceNotFoundException;
 import com.payandpark.payandpark.parkinglot.model.ParkingLot;
-import com.payandpark.payandpark.parkinglot.model.ParkingLotMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +20,7 @@ public class ParkingLotRepository {
         String sql = "select id from pl.parking_lot where id = " + id;
         try {
             log.info("Query :: {}", sql);
-            ParkingLot parkingLot =  jdbcTemplate.queryForObject(sql, new ParkingLotMapper());
+            ParkingLot parkingLot =  jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ParkingLot.class));
             log.info("Parking lot details :: {} for id :: {}", parkingLot.toString(), id);
             return parkingLot;
         } catch (EmptyResultDataAccessException e) {
