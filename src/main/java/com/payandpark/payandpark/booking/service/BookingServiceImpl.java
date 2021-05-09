@@ -18,11 +18,15 @@ public class BookingServiceImpl implements BookingService {
     public BookingDetails createBooking(CreateBookingRequest request) {
         log.info("Creating booking for request :: {}", request.toString());
         return repository.createBooking(request);
+
+        //TODO:: Update slot status
     }
 
     @Override
     public BookingDetails endBooking(int bookingId) {
         log.info("Ending booking :: {}", bookingId);
         return repository.endBooking(bookingId);
+
+        //TODO:: Update slot status
     }
 }
