@@ -1,4 +1,4 @@
-package com.payandpark.payandpark.Exception;
+package com.payandpark.payandpark.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

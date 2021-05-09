@@ -8,5 +8,6 @@ import java.util.List;
 @Data
 public class ParkingLot {
     private int id;
+    private String status;
     private List<ParkingSlot> parkingSlotSet;
 }
