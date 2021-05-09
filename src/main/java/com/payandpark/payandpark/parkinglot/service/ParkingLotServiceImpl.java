@@ -1,5 +1,6 @@
 package com.payandpark.payandpark.parkinglot.service;
 
+import com.payandpark.payandpark.parkinglot.model.AddParkingSlotInParkingLotRequest;
 import com.payandpark.payandpark.parkinglot.repository.ParkingLotRepository;
 import com.payandpark.payandpark.parkinglot.model.ParkingLot;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
@@ -27,5 +28,16 @@ public class ParkingLotServiceImpl implements ParkingLotService{
         List<ParkingSlot> parkingSlots = parkingSlotService.fetchAllParkingSlotsByLotId(id);
         parkingLot.setParkingSlotSet(parkingSlots);
         return parkingLot;
+    }
+
+    @Override
+    public void addParkingLot() {
+        //TODO:: Implementation
+    }
+
+    @Override
+    public void addParkingSlotToParkingLot(AddParkingSlotInParkingLotRequest request) {
+        log.info("Adding parking slot :: {} to parking lot :: {}", request.getParkingSlotId(), request.getParkingLotId());
+        parkingLotRepository.addParkingSlotToParkingLot(request);
     }
 }

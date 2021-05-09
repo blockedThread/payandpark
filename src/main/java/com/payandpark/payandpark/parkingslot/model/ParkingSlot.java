@@ -6,4 +6,5 @@ import lombok.Data;
 public class ParkingSlot {
     private int id;
     private String type;
+    private String status;
 }

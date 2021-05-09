@@ -1,7 +1,7 @@
 package com.payandpark.payandpark.parkingslot.repository;
 
-import com.payandpark.payandpark.Exception.ResourceNotFoundException;
-import com.payandpark.payandpark.Exception.ResourceNotSavedException;
+import com.payandpark.payandpark.exception.ResourceNotFoundException;
+import com.payandpark.payandpark.exception.ResourceNotSavedException;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlotRequest;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +22,7 @@ public class ParkingSlotRepository {
     private JdbcTemplate jdbcTemplate;
 
     public ParkingSlot fetchParkingSlotById(int id) {
-        String sql = "select ps.id, vt.type from\n" +
+        String sql = "select ps.id, vt.type, ps.status from\n" +
                 "pl.parking_slot ps\n" +
                 "inner join\n" +
                 "pl.vehicle_type vt\n" +
@@ -38,7 +38,7 @@ public class ParkingSlotRepository {
     }
 
     public List<ParkingSlot> fetchAllParkingSlotsByLotId(int parkingLotId) {
-        String sql = "select ps.id, vt.type from \n" +
+        String sql = "select ps.id, vt.type, ps.status from \n" +
                 "pl.parking_lot pl\n" +
                 "inner join\n" +
                 "pl.parking_lot_slot_mapping plsm\n" +

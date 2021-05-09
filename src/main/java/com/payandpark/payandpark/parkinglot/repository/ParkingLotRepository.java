@@ -1,6 +1,8 @@
 package com.payandpark.payandpark.parkinglot.repository;
 
-import com.payandpark.payandpark.Exception.ResourceNotFoundException;
+import com.payandpark.payandpark.exception.ResourceNotFoundException;
+import com.payandpark.payandpark.exception.ResourceNotSavedException;
+import com.payandpark.payandpark.parkinglot.model.AddParkingSlotInParkingLotRequest;
 import com.payandpark.payandpark.parkinglot.model.ParkingLot;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,18 @@ public class ParkingLotRepository {
             return parkingLot;
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Parking lot not found with id: " + id);
+        }
+    }
+
+    public void addParkingSlotToParkingLot(AddParkingSlotInParkingLotRequest request) {
+        String sql = "insert into pl.parking_lot_slot_mapping (parking_lot_id, parking_slot_id)\n" +
+                "values(" + request.getParkingLotId() + ", "+ request.getParkingSlotId()+")";
+        try {
+            log.info("Query :: {}", sql);
+            jdbcTemplate.execute(sql);
+        } catch (ResourceNotSavedException e) {
+            log.error("Unable to add parking slot to parking lot for request :: {}", request.toString());
+            throw new ResourceNotSavedException("Unable to add parking slot to parking lot");
         }
     }
 }
