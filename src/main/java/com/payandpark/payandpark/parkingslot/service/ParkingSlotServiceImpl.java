@@ -1,11 +1,14 @@
 package com.payandpark.payandpark.parkingslot.service;
 
-import com.payandpark.payandpark.parkingslot.model.ParkingSlotRequest;
+import com.payandpark.payandpark.exception.BadRequestException;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
+import com.payandpark.payandpark.parkingslot.model.ParkingSlotRequest;
+import com.payandpark.payandpark.parkingslot.model.ParkingSlotStatus;
 import com.payandpark.payandpark.parkingslot.repository.ParkingSlotRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -36,7 +39,47 @@ public class ParkingSlotServiceImpl implements ParkingSlotService {
     }
 
     @Override
+    public void updateParkingSlotStatus(int parkingSlotId, String status) {
+        log.info("Updating parking slot status for slot id :: {}, status :: {}", parkingSlotId, status);
+        parkingSlotRepository.updateParkingSlotStatus(parkingSlotId, status);
+    }
+
+    @Override
     public void removeParkingSlot(int parkingSlotId) {
+        log.info("Removing parking slot :: {}", parkingSlotId);
         parkingSlotRepository.removeParkingSlot(parkingSlotId);
+    }
+
+    @Override
+    public List<ParkingSlot> fetchAllParkingSlots(ParkingSlotRequest request) {
+
+        if (!StringUtils.hasText(request.getStatus())) {
+            log.error("Parameter status is null or empty in request :: {}", request.toString());
+            throw new BadRequestException("Parameter <status> is null or empty");
+        }
+
+        String status = request.getStatus().toUpperCase();
+
+        switch (ParkingSlotStatus.valueOf(status)) {
+            case ALL:
+                log.info("Fetching ALL parking slots");
+                return parkingSlotRepository.fetchAllParkingSlots();
+
+            case BOOKED:
+                log.info("Fetching BOOKED parking slots");
+                return parkingSlotRepository.fetchParkingSlotsForStatus(ParkingSlotStatus.BOOKED.name());
+
+            case AVAILABLE:
+                log.info("Fetching AVAILABLE parking slots");
+                return parkingSlotRepository.fetchParkingSlotsForStatus(ParkingSlotStatus.AVAILABLE.name());
+
+            case UNAVAILABLE:
+                log.info("Fetching UNAVAILABLE parking slots");
+                return parkingSlotRepository.fetchParkingSlotsForStatus(ParkingSlotStatus.UNAVAILABLE.name());
+
+            default:
+                log.error("Undefined slot status request :: {}", status);
+                throw new BadRequestException("Undefined slot status request :: " + status);
+        }
     }
 }
