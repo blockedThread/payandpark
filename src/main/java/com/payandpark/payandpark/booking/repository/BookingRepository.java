@@ -2,12 +2,17 @@ package com.payandpark.payandpark.booking.repository;
 
 import com.payandpark.payandpark.booking.model.BookingDetails;
 import com.payandpark.payandpark.booking.model.CreateBookingRequest;
+import com.payandpark.payandpark.booking.model.FetchBookingsRequest;
 import com.payandpark.payandpark.exception.ResourceNotSavedException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Repository
@@ -45,5 +50,27 @@ public class BookingRepository {
         }
     }
 
+    public List<BookingDetails> fetchAllBookings(String status) {
+        String sql = "select id, userId, parking_slot_id as parkingSlotId, startTime, endTime, status from pl.booking\n" +
+                "where status = '" + status + "'";
+        try {
+            log.info("Query :: {}", sql);
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(BookingDetails.class));
+        } catch (EmptyResultDataAccessException e) {
+            log.info("No bookings with status :: {}", status);
+            return new ArrayList<>();
+        }
+    }
+
+    public List<BookingDetails> fetchAllBookings() {
+        String sql = "select id, userId, parking_slot_id as parkingSlotId, startTime, endTime, status from pl.booking";
+        try {
+            log.info("Query :: {}", sql);
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(BookingDetails.class));
+        } catch (EmptyResultDataAccessException e) {
+            log.info("No bookings found");
+            return new ArrayList<>();
+        }
+    }
 
 }

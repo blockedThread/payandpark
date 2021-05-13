@@ -34,7 +34,7 @@ public class ParkingSlotRepository {
             ParkingSlot parkingSlot = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ParkingSlot.class));
             log.info("Parking slot details :: {} for id :: {}", parkingSlot.toString(), id);
             return parkingSlot;
-        } catch (EmptyResultDataAccessException e) {
+            } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Parking slot not found with id: " + id);
         }
     }

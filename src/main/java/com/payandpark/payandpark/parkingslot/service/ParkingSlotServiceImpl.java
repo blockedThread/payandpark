@@ -66,16 +66,10 @@ public class ParkingSlotServiceImpl implements ParkingSlotService {
                 return parkingSlotRepository.fetchAllParkingSlots();
 
             case BOOKED:
-                log.info("Fetching BOOKED parking slots");
-                return parkingSlotRepository.fetchParkingSlotsForStatus(ParkingSlotStatus.BOOKED.name());
-
             case AVAILABLE:
-                log.info("Fetching AVAILABLE parking slots");
-                return parkingSlotRepository.fetchParkingSlotsForStatus(ParkingSlotStatus.AVAILABLE.name());
-
             case UNAVAILABLE:
-                log.info("Fetching UNAVAILABLE parking slots");
-                return parkingSlotRepository.fetchParkingSlotsForStatus(ParkingSlotStatus.UNAVAILABLE.name());
+                log.info("Fetching {} parking slots", status);
+                return parkingSlotRepository.fetchParkingSlotsForStatus(status);
 
             default:
                 log.error("Undefined slot status request :: {}", status);
