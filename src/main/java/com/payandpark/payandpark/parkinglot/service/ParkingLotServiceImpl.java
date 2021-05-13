@@ -4,6 +4,7 @@ import com.payandpark.payandpark.parkinglot.model.AddParkingSlotInParkingLotRequ
 import com.payandpark.payandpark.parkinglot.repository.ParkingLotRepository;
 import com.payandpark.payandpark.parkinglot.model.ParkingLot;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
+import com.payandpark.payandpark.parkingslot.model.ParkingSlotStatus;
 import com.payandpark.payandpark.parkingslot.service.ParkingSlotService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,7 @@ public class ParkingLotServiceImpl implements ParkingLotService{
     public void addParkingSlotToParkingLot(AddParkingSlotInParkingLotRequest request) {
         log.info("Adding parking slot :: {} to parking lot :: {}", request.getParkingSlotId(), request.getParkingLotId());
         parkingLotRepository.addParkingSlotToParkingLot(request);
+        log.info("Updating parking slot :: {} status to available", request.getParkingSlotId());
+        parkingSlotService.updateParkingSlotStatus(request.getParkingSlotId(), ParkingSlotStatus.AVAILABLE.name());
     }
 }

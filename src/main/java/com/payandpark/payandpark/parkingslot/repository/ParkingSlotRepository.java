@@ -1,5 +1,6 @@
 package com.payandpark.payandpark.parkingslot.repository;
 
+import com.payandpark.payandpark.booking.model.BookingDetails;
 import com.payandpark.payandpark.exception.ResourceNotFoundException;
 import com.payandpark.payandpark.exception.ResourceNotSavedException;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -61,7 +63,7 @@ public class ParkingSlotRepository {
 
     public ParkingSlot addParkingSlot(ParkingSlotRequest request) {
         String sql = "insert into pl.parking_slot (vehicle_type_id)\n" +
-                "values ("+ request.getType() + ") returning id";
+                "values (" + request.getType() + ") returning id";
         ParkingSlot parkingSlot = null;
         try {
             log.info("Query :: {}", sql);
@@ -80,7 +82,51 @@ public class ParkingSlotRepository {
             log.info("Query :: {}", sql);
             jdbcTemplate.execute(sql);
         } catch (Exception e) {
-            log.error("Error occurred while deleting parking slot :: {} cause :: {}",parkingSlotId, e.getCause());
+            log.error("Error occurred while deleting parking slot :: {} cause :: {}", parkingSlotId, e.getCause());
+        }
+    }
+
+    public void updateParkingSlotStatus(int parkingSlotId, String status) {
+        String sql = "update pl.parking_slot set status = '" + status + "' where id = " + parkingSlotId;
+        try {
+            log.info("Query :: {}", sql);
+            jdbcTemplate.execute(sql);
+            log.info("Updated parking slot :: {} status to :: {}", parkingSlotId, status);
+        } catch (Exception e) {
+            log.error("Error occurred while updating parking slot status for slot :: {}", parkingSlotId);
+            throw new ResourceNotSavedException("Error occurred while updating parking slot status for slot :: " + parkingSlotId);
+        }
+    }
+
+    public List<ParkingSlot> fetchParkingSlotsForStatus(String status) {
+        String sql = "select ps.id, vt.type, ps.status from \n" +
+                "pl.parking_slot ps\n" +
+                "inner join\n" +
+                "pl.vehicle_type vt\n" +
+                "on ps.vehicle_type_id = vt.id \n" +
+                "where ps.status = '"+ status +"'";
+        try {
+            log.info("Query :: {}", sql);
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ParkingSlot.class));
+        } catch (Exception e) {
+            log.error("Error occurred while fetching available slots");
+            throw new ResourceNotFoundException("Error occurred while fetching available slots");
+        }
+    }
+
+    public List<ParkingSlot> fetchAllParkingSlots() {
+        String sql = "select ps.id, vt.type, ps.status from \n" +
+                "pl.parking_slot ps\n" +
+                "inner join\n" +
+                "pl.vehicle_type vt\n" +
+                "on ps.vehicle_type_id = vt.id";
+        try {
+            log.info("Query :: {}", sql);
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ParkingSlot.class));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Error occurred while fetching all parking slots :: {}", e.getCause());
+            throw new ResourceNotFoundException("Error occurred while fetching all parking slots");
         }
     }
 }

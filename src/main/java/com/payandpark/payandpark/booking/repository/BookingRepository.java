@@ -19,7 +19,7 @@ public class BookingRepository {
     public BookingDetails createBooking(CreateBookingRequest request) {
         String sql = "insert into pl.booking (userid, parking_slot_id, starttime)\n" +
                 "values ("+ request.getUserId()+ "," + request.getParkingSlotId()+ ", now())\n" +
-                "returning userid as userId, parking_slot_id as parkingSlotId, starttime as startTime, status";
+                "returning id, userid as userId, parking_slot_id as parkingSlotId, starttime as startTime, status";
         try {
             log.info("Query :: {}", sql);
             BookingDetails bookingDetails = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(BookingDetails.class));
@@ -33,7 +33,7 @@ public class BookingRepository {
 
     public BookingDetails endBooking(int bookingId) {
         String sql = "update pl.booking set endtime = now(), status = 'ENDED' where id = " + bookingId + "\n" +
-                "returning userid as userId, parking_slot_id as parkingSlotId, starttime as startTime, endtime as endTime, status";
+                "returning id, userid as userId, parking_slot_id as parkingSlotId, starttime as startTime, endtime as endTime, status";
         try {
             log.info("Query :: {}", sql);
             BookingDetails bookingDetails = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(BookingDetails.class));

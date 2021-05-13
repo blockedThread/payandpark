@@ -9,5 +9,7 @@ public interface ParkingSlotService {
     ParkingSlot fetchParkingSlotById(int id);
     List<ParkingSlot> fetchAllParkingSlotsByLotId(int parkingLotId);
     ParkingSlot addParkingSlot(ParkingSlotRequest request);
+    void updateParkingSlotStatus(int parkingSlotId, String status);
     void removeParkingSlot(int id);
+    List<ParkingSlot> fetchAllParkingSlots(ParkingSlotRequest request);
 }
