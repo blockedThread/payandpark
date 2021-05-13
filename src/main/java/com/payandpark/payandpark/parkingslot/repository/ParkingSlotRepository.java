@@ -82,6 +82,7 @@ public class ParkingSlotRepository {
             log.info("Query :: {}", sql);
             jdbcTemplate.execute(sql);
         } catch (Exception e) {
+            log.info("Error occurred while deleteing parking slot :: " + parkingSlotId);
             log.error("Error occurred while deleting parking slot :: {} cause :: {}", parkingSlotId, e.getCause());
         }
     }
