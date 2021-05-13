@@ -44,4 +44,11 @@ public class BookingController {
         List<BookingDetails> bookingDetailsList = bookingService.fetchAllBookings(request);
         return new ResponseEntity<>(bookingDetailsList, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/parking/booking/fetch/{bookingId}")
+    ResponseEntity<BookingDetails> fetchBookingDetailsById(@PathVariable int bookingId) {
+        log.info("Request received to fetch booking details for id :: {}", bookingId);
+        BookingDetails bookingDetails = bookingService.fetchBookingDetailsById(bookingId);
+        return new ResponseEntity<>(bookingDetails, HttpStatus.OK);
+    }
 }

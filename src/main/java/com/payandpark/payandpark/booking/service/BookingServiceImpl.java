@@ -53,6 +53,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingDetails fetchBookingDetailsById(int bookingId) {
+        log.info("Fetching booking details for id :: {}", bookingId);
+        return repository.fetchBookingDetailsById(bookingId);
+    }
+
+    @Override
     public List<BookingDetails> fetchAllBookings(FetchBookingsRequest request) {
 
         if(!StringUtils.hasText(request.getStatus())) {
@@ -75,5 +81,6 @@ public class BookingServiceImpl implements BookingService {
                 log.info("Undefined booking status :: {}", status);
                 throw new BadRequestException("Undefined booking status :: " + status);
         }
+
     }
 }
