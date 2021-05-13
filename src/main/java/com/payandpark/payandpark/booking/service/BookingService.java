@@ -9,5 +9,6 @@ import java.util.List;
 public interface BookingService {
     BookingDetails createBooking(CreateBookingRequest request);
     BookingDetails endBooking(int bookingId);
+    BookingDetails fetchBookingDetailsById(int bookingId);
     List<BookingDetails> fetchAllBookings(FetchBookingsRequest request);
 }
