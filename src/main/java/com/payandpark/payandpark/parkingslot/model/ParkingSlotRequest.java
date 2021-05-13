@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ParkingSlotRequest {
-    private int id;
-    private int type;
+    private Integer id;
+    private Integer type;
     private String status;
 }

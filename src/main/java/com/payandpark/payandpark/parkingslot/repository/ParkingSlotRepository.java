@@ -34,7 +34,7 @@ public class ParkingSlotRepository {
             ParkingSlot parkingSlot = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ParkingSlot.class));
             log.info("Parking slot details :: {} for id :: {}", parkingSlot.toString(), id);
             return parkingSlot;
-        } catch (EmptyResultDataAccessException e) {
+            } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Parking slot not found with id: " + id);
         }
     }
@@ -82,6 +82,7 @@ public class ParkingSlotRepository {
             log.info("Query :: {}", sql);
             jdbcTemplate.execute(sql);
         } catch (Exception e) {
+            log.info("Error occurred while deleteing parking slot :: " + parkingSlotId);
             log.error("Error occurred while deleting parking slot :: {} cause :: {}", parkingSlotId, e.getCause());
         }
     }
