@@ -1,6 +1,5 @@
 package com.payandpark.payandpark.parkingslot.repository;
 
-import com.payandpark.payandpark.booking.model.BookingDetails;
 import com.payandpark.payandpark.exception.ResourceNotFoundException;
 import com.payandpark.payandpark.exception.ResourceNotSavedException;
 import com.payandpark.payandpark.parkingslot.model.ParkingSlot;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
