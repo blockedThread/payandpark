@@ -1,6 +1,6 @@
 package com.payandpark.payandpark.controller;
 
-import com.payandpark.payandpark.booking.model.BookingDetails;
+import com.payandpark.payandpark.booking.model.Booking;
 import com.payandpark.payandpark.booking.model.CreateBookingRequest;
 import com.payandpark.payandpark.booking.model.FetchBookingsRequest;
 import com.payandpark.payandpark.booking.service.BookingService;
@@ -25,30 +25,30 @@ public class BookingController {
     BookingService bookingService;
 
     @PutMapping(value = "/parking/booking/create/")
-    ResponseEntity<BookingDetails> createBooking(@RequestBody CreateBookingRequest request) {
+    ResponseEntity<Booking> createBooking(@RequestBody CreateBookingRequest request) {
         log.info("request received to create booking :: {}", request.toString());
-        BookingDetails bookingDetails = bookingService.createBooking(request);
-        return new ResponseEntity<>(bookingDetails, HttpStatus.OK);
+        Booking booking = bookingService.createBooking(request);
+        return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 
     @GetMapping(value = "/parking/booking/end/{bookingId}")
-    ResponseEntity<BookingDetails> endBooking(@PathVariable int bookingId) {
+    ResponseEntity<Booking> endBooking(@PathVariable int bookingId) {
         log.info("Request received to end booking :: {}", bookingId);
-        BookingDetails bookingDetails = bookingService.endBooking(bookingId);
-        return new ResponseEntity<>(bookingDetails, HttpStatus.OK);
+        Booking booking = bookingService.endBooking(bookingId);
+        return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 
     @PostMapping(value = "/parking/booking/fetch/all/")
-    ResponseEntity<List<BookingDetails>> fetchAllBookingDetails(@RequestBody FetchBookingsRequest request) {
+    ResponseEntity<List<Booking>> fetchAllBookingDetails(@RequestBody FetchBookingsRequest request) {
         log.info("Request received to fetch all booking details :: {}", request.toString());
-        List<BookingDetails> bookingDetailsList = bookingService.fetchAllBookings(request);
-        return new ResponseEntity<>(bookingDetailsList, HttpStatus.OK);
+        List<Booking> bookingList = bookingService.fetchAllBookings(request);
+        return new ResponseEntity<>(bookingList, HttpStatus.OK);
     }
 
     @GetMapping(value = "/parking/booking/fetch/{bookingId}")
-    ResponseEntity<BookingDetails> fetchBookingDetailsById(@PathVariable int bookingId) {
+    ResponseEntity<Booking> fetchBookingDetailsById(@PathVariable int bookingId) {
         log.info("Request received to fetch booking details for id :: {}", bookingId);
-        BookingDetails bookingDetails = bookingService.fetchBookingDetailsById(bookingId);
-        return new ResponseEntity<>(bookingDetails, HttpStatus.OK);
+        Booking booking = bookingService.fetchBookingDetailsById(bookingId);
+        return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 }

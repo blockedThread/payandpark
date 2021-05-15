@@ -1,6 +1,6 @@
 package com.payandpark.payandpark.booking.service;
 
-import com.payandpark.payandpark.booking.model.BookingDetails;
+import com.payandpark.payandpark.booking.model.Booking;
 import com.payandpark.payandpark.booking.model.BookingStatus;
 import com.payandpark.payandpark.booking.model.CreateBookingRequest;
 import com.payandpark.payandpark.booking.model.FetchBookingsRequest;
@@ -29,7 +29,7 @@ public class BookingServiceImpl implements BookingService {
     ParkingSlotService parkingSlotService;
 
     @Override
-    public BookingDetails createBooking(CreateBookingRequest request) {
+    public Booking createBooking(CreateBookingRequest request) {
         log.info("Creating booking for request :: {}", request.toString());
         ParkingSlot parkingSlot = parkingSlotService.fetchParkingSlotById(request.getParkingSlotId());
 
@@ -39,35 +39,46 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Parking slot :: " + request.getParkingSlotId() + " is :: " + parkingSlot.getStatus());
         }
 
-        BookingDetails bookingDetails = repository.createBooking(request);
+        Booking booking = repository.createBooking(request);
         parkingSlotService.updateParkingSlotStatus(request.getParkingSlotId(), BOOKED.name());
-        return bookingDetails;
+        return booking;
     }
 
     @Override
-    public BookingDetails endBooking(int bookingId) {
+    public Booking endBooking(int bookingId) {
         log.info("Ending booking :: {}", bookingId);
-        BookingDetails bookingDetails = repository.endBooking(bookingId);
-        parkingSlotService.updateParkingSlotStatus(bookingDetails.getParkingSlotId(), AVAILABLE.name());
-        return bookingDetails;
+        Booking booking = repository.endBooking(bookingId);
+        parkingSlotService.updateParkingSlotStatus(booking.getParkingSlotId(), AVAILABLE.name());
+        return booking;
     }
 
     @Override
-    public BookingDetails fetchBookingDetailsById(int bookingId) {
+    public Booking fetchBookingDetailsById(int bookingId) {
         log.info("Fetching booking details for id :: {}", bookingId);
         return repository.fetchBookingDetailsById(bookingId);
     }
 
     @Override
-    public List<BookingDetails> fetchAllBookings(FetchBookingsRequest request) {
+    public List<Booking> fetchAllBookings(FetchBookingsRequest request) {
 
-        if(!StringUtils.hasText(request.getStatus())) {
-            log.error("Parameter status is null or empty for request :: {}", request.toString());
-            throw new BadRequestException("Parameter status is null or empty for request :: " + request.toString());
+        if(request.getUserId() == null && !StringUtils.hasText(request.getStatus())) {
+            log.error("All parameters are null or empty for request :: {}", request.toString());
+            throw new BadRequestException("All parameters are null or empty for request :: " + request.toString());
         }
 
-        String status = request.getStatus().toUpperCase();
+        if(StringUtils.hasText(request.getStatus())) {
+            String status = request.getStatus().toUpperCase();
+            return fetchAllBookingsByStatus(status);
+        } else if(request.getUserId() != null) {
+            return fetchAllBookingsByUserId(request.getUserId());
+        }
 
+        log.error("Invalid fetch bookings request :: {}", request.toString());
+        throw new BadRequestException("Invalid fetch bookings request :: " + request.toString());
+    }
+
+    private List<Booking> fetchAllBookingsByStatus(String status) {
+        log.info("Fetching booking details by status :: {}", status);
         switch (BookingStatus.valueOf(status)) {
             case ALL:
                 return repository.fetchAllBookings();
@@ -75,12 +86,16 @@ public class BookingServiceImpl implements BookingService {
             case ACTIVE:
             case ENDED:
                 log.info("Fetching {} bookings", status);
-                return repository.fetchAllBookings(status);
+                return repository.fetchAllBookingsByStatus(status);
 
             default:
                 log.info("Undefined booking status :: {}", status);
                 throw new BadRequestException("Undefined booking status :: " + status);
         }
+    }
 
+    private List<Booking> fetchAllBookingsByUserId(int userId) {
+        log.info("Fetching booking details for userId :: {}", userId);
+        return repository.fetchAllBookingsByUserId(userId);
     }
 }

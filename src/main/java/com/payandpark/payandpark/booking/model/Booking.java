@@ -3,7 +3,7 @@ package com.payandpark.payandpark.booking.model;
 import lombok.Data;
 
 @Data
-public class BookingDetails {
+public class Booking {
     private int id;
     private int userId;
     private int parkingSlotId;
