@@ -1,6 +1,7 @@
 package com.payandpark.payandpark.booking.repository;
 
 import com.payandpark.payandpark.booking.model.Booking;
+import com.payandpark.payandpark.charge.model.Charge;
 import com.payandpark.payandpark.booking.model.CreateBookingRequest;
 import com.payandpark.payandpark.exception.ResourceNotFoundException;
 import com.payandpark.payandpark.exception.ResourceNotSavedException;
@@ -39,7 +40,7 @@ public class BookingRepository {
 
     public Booking endBooking(int bookingId) {
         String sql = "update pl.booking set endtime = now(), status = 'ENDED' where id = " + bookingId + "\n" +
-                "returning id, userid as userId, parking_slot_id as parkingSlotId, starttime as startTime, endtime as endTime, status";
+                "and status = 'ACTIVE' returning id, userid as userId, parking_slot_id as parkingSlotId, starttime as startTime, endtime as endTime, status";
         try {
             log.info("Query :: {}", sql);
             Booking booking = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Booking.class));
@@ -76,7 +77,7 @@ public class BookingRepository {
     }
 
     public Booking fetchBookingDetailsById(int bookingId) {
-        String sql = "select id, userId, parking_slot_id as parkingSlotId, startTime, endTime, status from pl.booking\n" +
+        String sql = "select id, userId, parking_slot_id as parkingSlotId, startTime, endTime, status, price from pl.booking\n" +
                 "where id = '" + bookingId + "'";
         try {
             log.info("Query :: {}", sql);
@@ -88,13 +89,25 @@ public class BookingRepository {
     }
 
     public List<Booking> fetchAllBookings() {
-        String sql = "select id, userId, parking_slot_id as parkingSlotId, startTime, endTime, status from pl.booking";
+        String sql = "select id, userId, parking_slot_id as parkingSlotId, startTime, endTime, status from pl.booking order by startTime desc";
         try {
             log.info("Query :: {}", sql);
             return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Booking.class));
         } catch (EmptyResultDataAccessException e) {
             log.info("No bookings found");
             return new ArrayList<>();
+        }
+    }
+
+    public Booking updateBookingPrice(int bookingId, int price) {
+        String sql = "update pl.booking set price = " + price + " where id = " + bookingId
+                + " returning id, userId, parking_slot_id as parkingSlotId, startTime, endTime, status, price";
+        try {
+            log.info("Query :: {}", sql);
+            return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Booking.class));
+        } catch (Exception e) {
+            log.error("Error occurred while updating booking price :: {}", bookingId);
+            throw new ResourceNotFoundException("Error occurred while updating booking price :: " + bookingId);
         }
     }
 

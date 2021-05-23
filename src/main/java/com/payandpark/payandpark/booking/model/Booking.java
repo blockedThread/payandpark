@@ -9,5 +9,6 @@ public class Booking {
     private int parkingSlotId;
     private String startTime;
     private String endTime;
+    private int price;
     private String status;
 }

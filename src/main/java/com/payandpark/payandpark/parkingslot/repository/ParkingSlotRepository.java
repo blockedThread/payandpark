@@ -22,7 +22,7 @@ public class ParkingSlotRepository {
     private JdbcTemplate jdbcTemplate;
 
     public ParkingSlot fetchParkingSlotById(int id) {
-        String sql = "select ps.id, vt.type, ps.status from\n" +
+        String sql = "select ps.id, vt.id as vehicleTypeId, vt.type, ps.status from\n" +
                 "pl.parking_slot ps\n" +
                 "inner join\n" +
                 "pl.vehicle_type vt\n" +
